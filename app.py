@@ -12,6 +12,10 @@ import math
 import pyorient
 
 from Queue import Queue
+from sklearn import preprocessing
+from sklearn import svm
+
+import numpy as np
 
 app = Flask(__name__)
 
@@ -74,8 +78,8 @@ def getData():
 	print "received coordinates: [" + lat1 + ", " + lat2 + "], [" + lng1 + ", " + lng2 + "]"
 	
 	client = pyorient.OrientDB("localhost", 2424)
-	session_id = client.connect("root", "password")
-	db_name = "soufun"
+	session_id = client.connect("root", "http://localhost:2480/")
+	db_name = "sofun"
 	db_username = "admin"
 	db_password = "admin"
 
@@ -158,7 +162,32 @@ def getData():
 	## MACHINE LEARNING IMPLEMENTATION
 
 	
-
+        featureData = []
+        targetData = []
+        for record in records:
+            featureData.append ([record.latitude, record.longitude])
+            targetData.append(record.price)
+            X = np.asarray (featureData, dtype='float')
+            y = np.asarray (targetData, dtype='float')
+            scaler = preprocessing.StandardScaler().fit(X)
+            X_scaled = scaler.transform(X)
+            c = 10000
+            e = 10
+            g = .01
+            
+            model = svm.SVR(C=C, epsilon=e, gamma=g, kernel='rbf', cache_size=2000)
+            model.fit(X_scaled, y)
+            
+            for j in range (numH):
+                for i in range (numW):
+                    lat = remap (j, numH, 0, lat1, lat2)
+                    lng = remap (i, 0, numW, lng1, lng2)
+                    
+                    testData = [[lat, lng]]
+                    X_test = np.asarray(testData, dtype='float')
+                    X_test_scaled = scaler.transform (X_test)
+                    grid [j][i] = model.predict (X_test_scaled)
+            
 	grid = normalizeArray(grid)
 
 	offsetLeft = (w - numW * cell_size) / 2.0
