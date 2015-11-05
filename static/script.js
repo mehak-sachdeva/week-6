@@ -1,4 +1,4 @@
-
+﻿
 
 var eventOutputContainer = document.getElementById("message");
 var eventSrc = new EventSource("/eventSource");
@@ -66,11 +66,14 @@ function updateData(){
 
 	// CAPTURE USER INPUT FOR ANALYSIS TYPE SELECTION
 	var checked = document.getElementById("interpolation").checked
+	var heatchecked = document.getElemntById("heatmap").checked
 
 	// CAPTURE USER INPUT FOR HEAT MAP 'SPREAD' OR OTHER PARAMETERS
 
+	var spreadvalue=document.getElementById("range").value
+
 	// SEND USER CHOICES FOR ANALYSIS TYPE, CELL SIZE, HEAT MAP SPREAD, ETC. TO SERVER
-	request = "/getData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&cell_size=" + cell_size + "&analysis=" + checked
+	request = "/getData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&cell_size=" + cell_size + "&analysis=" + checked + "&heatmap=" + heatchecked + "&spread="+spreadvalue
 
 	console.log(request);
 
